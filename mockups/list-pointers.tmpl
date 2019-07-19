@@ -1,0 +1,42 @@
+{% extends "base.tmpl" %}
+
+{% block title %}List Incoming Pointers{% endblock %}
+
+{% block main %}
+
+<section class="pointerlist">
+
+{% set pointer_base = "$artemis-pointers.dev" %}
+
+{% for ptr in pointers %}
+  <div class="card pointer">
+    <h3 class="card-header">
+      {{pointer_base}}/{{ptr.in}}
+    </h3>
+    <div class="card-body">
+      <p class="card-text pointer-type">
+        <strong>Type:</strong> {% if ptr.type=="PAYOUT" %}Direct Payout{% elif ptr.type=="RELAY" %}Interledger Relay{% elif ptr.type=="RIPPLENET" %}RippleNet Relay{% else %}(Unknown){% endif %}
+      </p>
+      <p class="card-text pointer-dest">
+        <strong>To:</strong> {% if ptr.type=="PAYOUT" %}<span class="xrpl-address">{{ptr.to.xrpl_address}}</span>{% elif ptr.type=="RELAY" %}<span class="ppointer">{{ptr.to.ptr}}</span>{% endif %}
+      </p>
+      <a href="#" class="btn btn-primary">View status</a>
+      <a href="#" class="btn btn-secondary">Edit</a>
+      <a href="#" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+{% endfor %}
+
+</section>
+
+{% endblock %}
+
+{% block left_sidebar %}
+<ul>
+  <li>Lorem</li>
+  <li>ipsum</li>
+  <li>dolor</li>
+  <li>sit</li>
+  <li>amet</li>
+</ul>
+{% endblock %}
