@@ -1,4 +1,5 @@
 let base_url = "$artemis-pointers.dev"
+const api_base = "https://artemis-pointers.dev/api" // TODO
 
 async function on_ready() {
 
@@ -329,8 +330,10 @@ let mock_pointers = {
 
 async function get_pointers() {
     // TODO: actually get from API
+//    const resp = await ($.get(api_base+"/pointers", {dataType:"json"}))
+//      // do something with resp
     
-    
+    ////////// MOCK BELOW //////////////////////////////
     // convert mock dictionary to array
     let ptrs = []
     for (var key in mock_pointers) {
@@ -344,11 +347,13 @@ async function get_pointers() {
     }
 }
 
-async function get_status(pointer_in) {
+async function get_status(ptr_in) {
     // TODO: actually get from API
+//    const url = api_base+"/pointers/"+encodeURI(ptr_in)
+//    const resp = await ($.get(url, {dataType:"json"}))
     
     
-    let extended_ptr = $.extend(true, {}, mock_pointers[pointer_in])
+    let extended_ptr = $.extend(true, {}, mock_pointers[ptr_in])
     if (extended_ptr.in == "mduo13") {
         extended_ptr["balance"] = "1300001"
     } else if (extended_ptr.in == "dfuelling") {
@@ -361,6 +366,8 @@ async function get_status(pointer_in) {
 
 async function do_delete(ptr_in) {
     // TODO DELETE w/ API
+    // const url = api_base+"/pointers/"+encodeUR(ptr_in)
+    // const result = await ($.ajax(url, {method: "DELETE"}))
     
     if (mock_pointers.hasOwnProperty(ptr_in)) {
         delete mock_pointers[ptr_in]
@@ -372,6 +379,12 @@ async function do_delete(ptr_in) {
 
 async function do_save(ptr, old_in) {
     // TODO $.post to API
+    // let url
+    // if (old_in) {
+    //   url = api_base+"/pointers/"+encodeUR(old_in)
+    // } else {
+    //   url = api_base+"/pointers/"+encodeUR(ptr.in)
+    // }
     
     if (old_in && mock_pointers.hasOwnProperty(old_in)) {
         let bal = mock_pointers[old_in].balance
