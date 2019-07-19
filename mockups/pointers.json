@@ -2,13 +2,13 @@
   "pointers": [
     {
       "in": "mduo13",
-      "type": "PAYOUT",
+      "type": "XRPL_ADDRESS",
       "to": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn"
     },
 
     {
       "in": "dfuelling",
-      "type": "RELAY",
+      "type": "PAYMENT_POINTER",
       "to": "$example.com/david"
     }
   ]

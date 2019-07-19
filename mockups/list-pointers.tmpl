@@ -15,10 +15,10 @@
     </h3>
     <div class="card-body">
       <p class="card-text pointer-type">
-        <strong>Type:</strong> {% if ptr.type=="PAYOUT" %}Direct Payout{% elif ptr.type=="RELAY" %}Interledger Relay{% elif ptr.type=="RIPPLENET" %}RippleNet Relay{% else %}(Unknown){% endif %}
+        <strong>Type:</strong> {% if ptr.type=="XRPL_ADDRESS" %}Direct Payout{% elif ptr.type=="PAYMENT_POINTER" %}Interledger Relay{% elif ptr.type=="RIPPLENET" %}RippleNet Relay{% else %}(Unknown){% endif %}
       </p>
       <p class="card-text pointer-dest">
-        <strong>To:</strong> {% if ptr.type=="PAYOUT" %}<span class="xrpl-address">{{ptr.to}}</span>{% elif ptr.type=="RELAY" %}<span class="ppointer">{{ptr.to}}</span>{% endif %}
+        <strong>To:</strong> <span class="{{ptr.type|lower}}">{{ptr.to}}</span>
       </p>
       <a href="#" class="btn btn-primary">View status</a>
       <a href="#" class="btn btn-secondary">Edit</a>

@@ -10,16 +10,14 @@
     <link href="assets/bootstrap.css" rel="stylesheet" />
     <script src="assets/jquery-1.11.1.min.js"></script>
     <script src="assets/bootstrap.min.js"></script>
-
-    
-
-    
+    <script src="assets/artemis.js"></script>
 
 </head>
 
 <body class="artemis ">
   <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white">
     <a href="/" class="navbar-brand"><img src="assets/artemis-plate.png" class="logo"  height="100" alt="Artemis" /></a>
+    <h1>Artemis</h1>
     <button class="navbar-toggler" type="button" data-toggle="slide-collapse" data-target="#navbarHolder" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -31,7 +29,7 @@
           </li>
         
           <li class="nav-item">
-            <a class="nav-link" href="#settings/">Settings</a>
+            <a class="nav-link" href="#settings/">Account Settings</a>
           </li>
         
       </ul><!-- /.navbar-nav -->
@@ -44,62 +42,24 @@
       <main class="main col-md-7 col-lg-6 order-md-2  " role="main" id="main_content_body">
           
 
-<section class="pointerlist">
-
-
-
-
-  <div class="card pointer">
-    <h3 class="card-header">
-      $artemis-pointers.dev/mduo13
-    </h3>
-    <div class="card-body">
-      <p class="card-text pointer-type">
-        <strong>Type:</strong> Direct Payout
-      </p>
-      <p class="card-text pointer-dest">
-        <strong>To:</strong> <span class="xrpl_address">rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn</span>
-      </p>
-      <a href="#" class="btn btn-primary">View status</a>
-      <a href="#" class="btn btn-secondary">Edit</a>
-      <a href="#" class="btn btn-danger">Delete</a>
-    </div>
-  </div>
-
-  <div class="card pointer">
-    <h3 class="card-header">
-      $artemis-pointers.dev/dfuelling
-    </h3>
-    <div class="card-body">
-      <p class="card-text pointer-type">
-        <strong>Type:</strong> Interledger Relay
-      </p>
-      <p class="card-text pointer-dest">
-        <strong>To:</strong> <span class="payment_pointer">$example.com/david</span>
-      </p>
-      <a href="#" class="btn btn-primary">View status</a>
-      <a href="#" class="btn btn-secondary">Edit</a>
-      <a href="#" class="btn btn-danger">Delete</a>
-    </div>
-  </div>
-
-
-</section>
+        <section class="pointerlist">
+        </section>
+        
+        <section class="edit">
+        </section>
 
 
       </main>
 
       <!-- Left sidebar last so it's at the end for mobile -->
       <aside class="sidebar col-md-5 col-lg-3 p-0 order-md-1" role="complementary">
-          
-<ul>
-  <li>Lorem</li>
-  <li>ipsum</li>
-  <li>dolor</li>
-  <li>sit</li>
-  <li>amet</li>
-</ul>
-
+        <ul>
+          <li><a href="#create" class="createpointer">Create</a></li>
+          <li><a href="#list" class="listpointers active">List</a></li>
+          <li>dolor</li>
+          <li>sit</li>
+          <li>amet</li>
+        </ul>
       </aside>
     </div><!--/.row (main layout)-->
   </div>
