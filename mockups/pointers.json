@@ -3,17 +3,13 @@
     {
       "in": "mduo13",
       "type": "PAYOUT",
-      "to": {
-        "xrpl_address": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn"
-      }
+      "to": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn"
     },
 
     {
       "in": "dfuelling",
       "type": "RELAY",
-      "to": {
-        "ptr": "$example.com/david"
-      }
+      "to": "$example.com/david"
     }
   ]
 }
