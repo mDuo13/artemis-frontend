@@ -1,7 +1,9 @@
 let base_url = "$artemis-pointers.dev"
-let logged_in = false
+let logged_in = false//true
 let api_token = ""
 const api_base = "https://api-dot-artemis-pointers.appspot.com"
+
+const use_mock = false//true
 
 let auth0
 
@@ -424,96 +426,104 @@ let mock_pointers = {
 }
 
 async function get_pointers() {
-    const resp = await ($.ajax({
-        url: api_base+"/pointers",
-        dataType: "json",
-        headers: {"Auth": "Bearer "+api_token}
-    }))
+    if (!use_mock) {
+        const resp = await ($.ajax({
+            url: api_base+"/pointers",
+            dataType: "json",
+            headers: {"Auth": "Bearer "+api_token}
+        }))
 
-    console.log(resp)
-    return resp.data
+        console.log(resp)
+        return resp.data
+    }
 
     ////////// MOCK BELOW //////////////////////////////
     // convert mock dictionary to array
-    //let ptrs = []
-    //for (var key in mock_pointers) {
-    //  if (mock_pointers.hasOwnProperty(key)) {
-    //    ptrs.push(mock_pointers[key])
-    //  }
-    //}
+    let ptrs = []
+    for (var key in mock_pointers) {
+      if (mock_pointers.hasOwnProperty(key)) {
+        ptrs.push(mock_pointers[key])
+      }
+    }
       
-    //return {
-    //  "pointers": ptrs
-    //}
+    return {
+      "pointers": ptrs
+    }
 }
 
 async function get_status(ptr_in) {
-    const url = api_base+"/pointers/"+encodeURI(ptr_in)
-    const resp = await ($.ajax({
-        url: url,
-        dataType:"json",
-        headers: {"Auth": "Bearer "+api_token}
-    }))
+    if (!use_mock) {
+        const url = api_base+"/pointers/"+encodeURI(ptr_in)
+        const resp = await ($.ajax({
+            url: url,
+            dataType:"json",
+            headers: {"Auth": "Bearer "+api_token}
+        }))
 
-    console.debug(resp)
-    return resp.data
+        console.debug(resp)
+        return resp.data
+    }
 
-//    let extended_ptr = $.extend(true, {}, mock_pointers[ptr_in])
-//    if (extended_ptr.in == "mduo13") {
-//        extended_ptr["balance"] = "1300001"
-//    } else if (extended_ptr.in == "dfuelling") {
-//        extended_ptr["balance"] = "47"
-//    } else {
-//        extended_ptr["balance"] = Math.floor(Math.random()*(10**(Math.floor(Math.random()*10)))).toString()
-//    }
-//    return extended_ptr
+    let extended_ptr = $.extend(true, {}, mock_pointers[ptr_in])
+    if (extended_ptr.in == "mduo13") {
+        extended_ptr["balance"] = "1300001"
+    } else if (extended_ptr.in == "dfuelling") {
+        extended_ptr["balance"] = "47"
+    } else {
+        extended_ptr["balance"] = Math.floor(Math.random()*(10**(Math.floor(Math.random()*10)))).toString()
+    }
+    return extended_ptr
 }
 
 async function do_delete(ptr_in) {
-    const url = api_base+"/pointers/"+encodeURI(ptr_in)
-    const resp = await ($.ajax({
-        url: url,
-        dataType:"json",
-        headers: {"Auth": "Bearer "+api_token},
-        method: "DELETE"
-    }))
+    if (!use_mock) {
+        const url = api_base+"/pointers/"+encodeURI(ptr_in)
+        const resp = await ($.ajax({
+            url: url,
+            dataType:"json",
+            headers: {"Auth": "Bearer "+api_token},
+            method: "DELETE"
+        }))
 
-    console.debug(resp)
-    return resp.data
+        console.debug(resp)
+        return resp.data
+    }
 
-//    if (mock_pointers.hasOwnProperty(ptr_in)) {
-//        delete mock_pointers[ptr_in]
-//        return true
-//    } else {
-//        return false
-//    }
+    if (mock_pointers.hasOwnProperty(ptr_in)) {
+        delete mock_pointers[ptr_in]
+        return true
+    } else {
+        return false
+    }
 }
 
 async function do_save(ptr, old_in) {
-    let url
-    if (old_in) {
-        url = api_base+"/pointers/"+encodeURI(old_in)
-    } else {
-        url = api_base+"/pointers/"+encodeURI(ptr.in)
+    if (!use_mock) {
+        let url
+        if (old_in) {
+            url = api_base+"/pointers/"+encodeURI(old_in)
+        } else {
+            url = api_base+"/pointers/"+encodeURI(ptr.in)
+        }
+
+        const resp = await ($.ajax({
+            url: url,
+            dataType:"json",
+            headers: {"Auth": "Bearer "+api_token},
+            method: "PUT"
+        }))
+        console.debug(resp)
+        successNotif("Saved! "+JSON.stringify(ptr,null,2))
     }
 
-    const resp = await ($.ajax({
-        url: url,
-        dataType:"json",
-        headers: {"Auth": "Bearer "+api_token},
-        method: "PUT"
-    }))
-    console.debug(resp)
-    return resp.data
-
-//    if (old_in && mock_pointers.hasOwnProperty(old_in)) {
-//        let bal = mock_pointers[old_in].balance
-//        ptr.balance = bal
-//        delete mock_pointers[old_in]
-//    } else {
-//        //console.log("old_in:", old_in, "has it?", mock_pointers.hasOwnProperty(old_in))
-//    }
-//    mock_pointers[ptr.in] = ptr
+    if (old_in && mock_pointers.hasOwnProperty(old_in)) {
+        let bal = mock_pointers[old_in].balance
+        ptr.balance = bal
+        delete mock_pointers[old_in]
+    } else {
+        //console.log("old_in:", old_in, "has it?", mock_pointers.hasOwnProperty(old_in))
+    }
+    mock_pointers[ptr.in] = ptr
     successNotif("Saved! "+JSON.stringify(ptr,null,2))
 }
 
