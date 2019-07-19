@@ -7416,11 +7416,13 @@ a.current {
   padding-bottom: 7px; }
 
 /* ARTEMIS STUFF */
-.pointer.card {
+main .card {
   margin-bottom: 32px;
 }
 
 .not-real-link {
-  color: black;
+  color: black !important;
   text-decoration: none !important;
+  cursor: not-allowed !important;
 }
+
