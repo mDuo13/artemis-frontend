@@ -13,6 +13,7 @@
     <script src="assets/bootstrap-growl.jquery.js"></script>
     <script src="assets/artemis.js"></script>
     <script src="assets/big.min.js" type="application/javascript"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.0/auth0-spa-js.production.js"></script>
 
 </head>
 
@@ -25,13 +26,16 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarHolder">
       <ul class="nav navbar-nav">
-        
-          <li class="nav-item">
-            <a class="nav-link" href="#pointers/">Pointers</a>
+       
+          <li class="nav-item login">
+            <a class="nav-link" href="#login">Log in</a>
           </li>
         
-          <li class="nav-item">
-            <a class="nav-link" href="#settings/">Account Settings</a>
+          <li class="nav-item" id="userinfo">
+          </li>
+          
+          <li class="nav-item logout" style="display:none">
+            <a class="nav-link" href="#logout">Logout</a>
           </li>
         
       </ul><!-- /.navbar-nav -->
@@ -42,7 +46,10 @@
     <div class="row">
       <!-- main column -->
       <main class="main col-md-7 col-lg-6 order-md-2  " role="main" id="main_content_body">
-          
+      
+        <section class="loginbox">
+          <a id="login" href="#login" class="btn btn-success">Log in</a>
+        </section>
 
         <section class="pointerlist">
         </section>

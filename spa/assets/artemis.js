@@ -1,7 +1,18 @@
 let base_url = "$artemis-pointers.dev"
+let logged_in = false
+let api_token = ""
 const api_base = "https://artemis-pointers.dev/v1" // TODO
 
+let auth0
+
 async function on_ready() {
+    
+    auth0 = await createAuth0Client({
+      domain: 'artemis-test.auth0.com',
+      client_id: 'vJ8RBWXpUUYcE6YIs116m5T6sHS2Auwi'
+    })
+    
+    console.debug("Got Auth0 client")
 
     handle_hashchange()
     
@@ -9,14 +20,68 @@ async function on_ready() {
 }
 
 function handle_hashchange(evt) {
-    const path_match = (/^#(create|list|edit|show|delete)\/?(.*)$/).exec(window.location.hash)
-    if (path_match === null) list_pointers()
-    else if (path_match[1] == "create") create_pointer()
-    else if (path_match[1] == "list") list_pointers()
-    else if (path_match[1] == "edit" && path_match[2]) edit_pointer(path_match[2])
-    else if (path_match[1] == "show" && path_match[2]) show_pointer(path_match[2])
-    else if (path_match[1] == "delete" && path_match[2]) delete_pointer(path_match[2])
-    else list_pointers()
+    if (logged_in) {
+        const path_match = (/^#(create|list|edit|show|delete|logout)\/?(.*)$/).exec(window.location.hash)
+        if (path_match === null) list_pointers()
+        else if (path_match[1] == "create") create_pointer()
+        else if (path_match[1] == "list") list_pointers()
+        else if (path_match[1] == "edit" && path_match[2]) edit_pointer(path_match[2])
+        else if (path_match[1] == "show" && path_match[2]) show_pointer(path_match[2])
+        else if (path_match[1] == "delete" && path_match[2]) delete_pointer(path_match[2])
+        else if (path_match[1] == "logout") do_logout()
+        else list_pointers()
+    } else {
+        if (window.location.hash === "#login") {
+            try_login()
+        } else if (window.location.hash === "#logincallback") {
+            login_callback()
+        }
+    }
+}
+
+async function try_login() {
+    await auth0.loginWithRedirect({
+        redirect_uri: "https://artemis.mduo13.com/#logincallback"
+    })
+}
+
+async function login_callback() {
+    console.log("in login_callback()")
+    try {
+        result = await auth0.handleRedirectCallback()
+        console.log("handleRedirectCallback result:", result)
+    } catch(e) {
+        console.error(e)
+    }
+    // redirect handled
+    try {
+        api_token = await auth0.getTokenSilently()
+    } catch(e) {
+        console.error(e)
+        errorNotif("Login failed")
+        logged_in = false
+        return
+    }
+    
+    logged_in = true
+    successNotif("Logged in!")
+    $(".logout").show()
+    $(".login").hide()
+    
+    try{
+        const user = await auth0.getUser()
+        $('<span><img alt="user picture" src="'+user.picture+'" height="40" width="40" /> '+user.name+'</span>').appendTo($("#userinfo"))
+    } catch(e) {
+        console.error(e)
+    }
+    
+    
+    window.location.hash="#list"
+    return
+}
+
+async function do_logout() {
+    auth0.logout()
 }
 
 async function list_pointers() {
@@ -63,14 +128,14 @@ async function show_pointer(ptr_in) {
     if (ptr.balance === undefined) {
         scaled_balance = "0"
     } else {
-        scaled_balance = intscale_to_decimal(ptr.balance, ptr.currency_scale)
+        scaled_balance = intscale_to_decimal(ptr.balance, ptr.asset_scale)
     }
     
     let scaled_thresh
     if (ptr.threshold === undefined) {
         scaled_thresh = "0"
     } else {
-        scaled_thresh = intscale_to_decimal(ptr.threshold, ptr.currency_scale)
+        scaled_thresh = intscale_to_decimal(ptr.threshold, ptr.asset_scale)
     }
     
     $('<div class="card"><h3 class="card-header">'+base_url+'/'+ptr.in+'</h3>' +
@@ -81,7 +146,7 @@ async function show_pointer(ptr_in) {
         '<strong>To:</strong> <span class="'+ ptr.type + '">' + ptr.to + '</span>' +
         '</p>' +
         '<p><strong>Incoming Pointer:</strong> '+ptr.in+'</p>' +
-        '<p><strong>Balance:</strong> '+scaled_balance+' '+ptr.currency_code+'</p>' +
+        '<p><strong>Balance:</strong> '+scaled_balance+' '+ptr.asset_code+'</p>' +
         '<p><strong>Threshold:</strong> '+scaled_thresh+'</p>' +
         '<label>Web Monetization Meta Tag:</label>' +
         '<pre><code id="monetization_sample">&lt;meta name="monetization"\n  content="'+base_url+'/'+ptr.in+'"&gt;</code></pre>' +
@@ -125,7 +190,7 @@ async function pointer_edit_ui(ptr) {
     
     let scaled_threshold
     if (ptr.hasOwnProperty("threshold")) {
-        display_threshold = intscale_to_decimal(ptr.threshold, ptr.currency_scale)
+        display_threshold = intscale_to_decimal(ptr.threshold, ptr.asset_scale)
     } else {
         display_threshold = ""
     }
@@ -148,11 +213,11 @@ async function pointer_edit_ui(ptr) {
         '</select>' +
         '</div>' +
         '<div class="form-group row">' +
-        '<label for="currency_select" class="col-sm-3" id="currency_select_label"><strong>Currency:</strong></label> ' +
+        '<label for="currency_select" class="col-sm-3" id="currency_select_label"><strong>Currency/Asset:</strong></label> ' +
         '<select class="form-control col-sm-9 hide" id="currency_select">'+
-          '<option value="USD"'+(ptr.currency_code=="USD"?" selected":"")+'>United States Dollar (USD)</option>' +
-          '<option value="XRP"'+(ptr.currency_code=="XRP"?" selected":"")+'>XRP</option>' +
-          '<option value="HAK"'+(ptr.currency_code=="HAK"?" selected":"")+'>Hackathon Points (HAK)</option>' +
+          '<option value="USD"'+(ptr.asset_code=="USD"?" selected":"")+'>United States Dollar (USD)</option>' +
+          '<option value="XRP"'+(ptr.asset_code=="XRP"?" selected":"")+'>XRP</option>' +
+          '<option value="HAK"'+(ptr.asset_code=="HAK"?" selected":"")+'>Hackathon Points (HAK)</option>' +
         '</select>' +
         '</div>' +
         '<div class="form-group row">' +
@@ -256,13 +321,13 @@ async function handle_save(evt) {
     ptr.in = $("#pointer_in").val()
     ptr.type = $("#pointer_type_select").val()
     ptr.to = $("#to_address").val()
-    ptr.currency_code = $("#currency_select").val()
-    ptr.currency_scale = scale_by_currency_code(ptr.currency_code)
+    ptr.asset_code = $("#currency_select").val()
+    ptr.asset_scale = scale_by_asset_code(ptr.asset_code)
     let raw_thresh = $("#threshold").val()
     if (!raw_thresh) {
-        thresh_by_currency_code(ptr.currency_code)
+        thresh_by_asset_code(ptr.asset_code)
     } else {
-        ptr.threshold = decimal_to_intscale(raw_thresh, ptr.currency_scale)
+        ptr.threshold = decimal_to_intscale(raw_thresh, ptr.asset_scale)
     }
     let old_in = $("#old_in").val()
     
@@ -305,13 +370,13 @@ function decimal_to_intscale(decimal_s, scale_s) {
     return int_n.toString()
 }
 
-function scale_by_currency_code(cur_code) {
+function scale_by_asset_code(cur_code) {
     if (cur_code === "USD") return 2
     if (cur_code === "XRP") return 6
     else return 0
 }
 
-function thresh_by_currency_code(cur_code) {
+function thresh_by_asset_code(cur_code) {
     // default payout threshold
     if (cur_code === "USD") return "1"
     if (cur_code === "XRP") return ".001000"
@@ -344,8 +409,8 @@ let mock_pointers = {
       "type": "XRPL_ADDRESS",
       "to": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
       "threshold": "0001",
-      "currency_code": "XRP",
-      "currency_scale": 6
+      "asset_code": "XRP",
+      "asset_scale": 6
     },
 
     "dfuelling": {
@@ -353,8 +418,8 @@ let mock_pointers = {
       "type": "PAYMENT_POINTER",
       "to": "$example.com/david",
       "threshold": "0001",
-      "currency_code": "HAK",
-      "currency_scale": 0
+      "asset_code": "HAK",
+      "asset_scale": 0
     }
 }
 
