@@ -131,6 +131,14 @@ main .card {
 
 #left-nav {
   font-size: 1.2rem;
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 16px;
+}
+
+#left-nav li {
+  margin-left: 0;
+  padding-left: 0;
 }
 
 #left-nav a {

@@ -21,6 +21,9 @@ function handle_hashchange(evt) {
 
 async function list_pointers() {
     $("a").removeClass("active")
+    $(".edit").prop("href", "#edit").addClass("not-real-link")
+    $(".show").prop("href", "#show").addClass("not-real-link")
+    $(".delete").prop("href", "#delete").addClass("not-real-link")
     $(".list").addClass("active")
     
     $("section").hide()
@@ -56,7 +59,6 @@ async function show_pointer(ptr_in) {
     
     const ptr = await get_status(ptr_in)
     
-    console.log("ptr:", ptr)
     let scaled_balance
     if (ptr.balance === undefined) {
         scaled_balance = "0"
@@ -79,7 +81,7 @@ async function show_pointer(ptr_in) {
         '<strong>To:</strong> <span class="'+ ptr.type + '">' + ptr.to + '</span>' +
         '</p>' +
         '<p><strong>Incoming Pointer:</strong> '+ptr.in+'</p>' +
-        '<p><strong>Balance:</strong> '+scaled_balance+'</p>' +
+        '<p><strong>Balance:</strong> '+scaled_balance+' '+ptr.currency_code+'</p>' +
         '<p><strong>Threshold:</strong> '+scaled_thresh+'</p>' +
         '<label>Web Monetization Meta Tag:</label>' +
         '<pre><code id="monetization_sample">&lt;meta name="monetization"\n  content="'+base_url+'/'+ptr.in+'"&gt;</code></pre>' +
@@ -87,10 +89,17 @@ async function show_pointer(ptr_in) {
         '<a href="#delete/'+ptr.in+'" class="btn btn-danger delete">Delete</a>' +
         '</div></div>').appendTo(pointer_status)
     
+    $("#left-nav .edit").prop("href", "#edit/"+ptr.in).removeClass("not-real-link")
+    $("#left-nav .show").prop("href", "#show/"+ptr.in).removeClass("not-real-link")
+    $("#left-nav .delete").prop("href", "#delete/"+ptr.in).removeClass("not-real-link")
+    
 }
 
 async function create_pointer(evt) {
     $("a").removeClass("active")
+    $(".edit").prop("href", "#edit").addClass("not-real-link")
+    $(".show").prop("href", "#show").addClass("not-real-link")
+    $(".delete").prop("href", "#delete").addClass("not-real-link")
     $(".create").addClass("active")
     
     pointer_edit_ui({
@@ -103,6 +112,9 @@ async function edit_pointer(ptr_in) {
     $("a").removeClass("active")
     $(".edit").addClass("active")
     const ptr_status = await get_status(ptr_in)
+    $("#left-nav .edit").prop("href", "#edit/"+ptr_in).removeClass("not-real-link")
+    $("#left-nav .show").prop("href", "#show/"+ptr_in).removeClass("not-real-link")
+    $("#left-nav .delete").prop("href", "#delete/"+ptr_in).removeClass("not-real-link")
     pointer_edit_ui(ptr_status)
 }
 
@@ -154,6 +166,7 @@ async function pointer_edit_ui(ptr) {
         '</div></form></div></div>').appendTo(editbox)
     $("#pointer_type_select").change(select_type)
     $('<a class="save btn btn-success" href="#save">Save Pointer</a>').appendTo(editbox).click(handle_save)
+    
 }
 
 function select_type(event) {
@@ -213,6 +226,21 @@ async function delete_pointer(ptr_in) {
     
     $("section").hide().empty()
     
+    delete_confirm = $(".delete_confirm").empty().show()
+    
+    $('<div class="card"><h3 class="card-header">'+base_url+'/'+ptr_in+'</h3>' +
+        '<div class="card-body">' +
+        '<p>Really delete '+base_url+'/'+ptr_in+'?</p>' +
+        '<a href="#show/'+ptr_in+'" class="btn btn-secondary-outline edit">Leave</a>' +
+        '<a href="#reallydelete" class="btn btn-danger" id="reallydelete">Yes, Delete</a>' +
+        '</div></div>').appendTo(delete_confirm)
+    $("#reallydelete").click((evt) => {
+        really_delete(ptr_in)
+    })
+}
+    
+    
+async function really_delete(ptr_in) {
     const result = await do_delete(ptr_in)
     
     if (result === true) {
@@ -393,7 +421,7 @@ async function do_save(ptr, old_in) {
         ptr.balance = bal
         delete mock_pointers[old_in]
     } else {
-        console.log("old_in:", old_in, "has it?", mock_pointers.hasOwnProperty(old_in))
+        //console.log("old_in:", old_in, "has it?", mock_pointers.hasOwnProperty(old_in))
     }
     mock_pointers[ptr.in] = ptr
     successNotif("Saved! "+JSON.stringify(ptr,null,2))
