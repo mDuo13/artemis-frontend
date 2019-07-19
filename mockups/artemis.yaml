@@ -89,8 +89,8 @@ definitions:
       - type
       - to
       - threshold
-      - currency_code
-      - currency_scale
+      - asset_code
+      - asset_scale
     properties:
       in:
         type: string
@@ -102,12 +102,17 @@ definitions:
           - SPSP_URL
           - NONE
         example: PAYMENT_POINTER
+      to:
+        type: string
+        example: $example.com/dfuelling
       threshold:
         type: string
-      currency_code:
+      asset_code:
         type: string
         example: "XRP"
-      currency_scale:
+      asset_scale:
         type: integer
+      balance:
+        type: string
       
 
