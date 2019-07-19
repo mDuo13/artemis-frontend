@@ -36,13 +36,13 @@ async function list_pointers() {
             '<p class="card-text pointer-dest">' +
             '<strong>To:</strong> <span class="'+ ptr.type + '">' + ptr.to + '</span>' +
             '</p>' +
-            '<a href="#show/'+ptr.in+'" class="btn btn-primary show">View status</a>' +
+            '<a href="#show/'+ptr.in+'" class="btn btn-success show">View status</a>' +
             '<a href="#edit/'+ptr.in+'" class="btn btn-secondary edit">Edit</a>' +
             '<a href="#delete/'+ptr.in+'" class="btn btn-danger delete">Delete</a>' +
             '</div>' +
             '</div>').appendTo(pointerlist)
     })
-    $('<a class="create btn btn-primary" href="#create">Create New Pointer</a>').appendTo(pointerlist).click(create_pointer)
+    $('<a class="create btn btn-success" href="#create">Create New Pointer</a>').appendTo(pointerlist).click(create_pointer)
 }
 
 async function show_pointer(ptr_in) {
@@ -81,6 +81,8 @@ async function show_pointer(ptr_in) {
         '<p><strong>Incoming Pointer:</strong> '+ptr.in+'</p>' +
         '<p><strong>Balance:</strong> '+scaled_balance+'</p>' +
         '<p><strong>Threshold:</strong> '+scaled_thresh+'</p>' +
+        '<label>Web Monetization Meta Tag:</label>' +
+        '<pre><code id="monetization_sample">&lt;meta name="monetization"\n  content="'+base_url+'/'+ptr.in+'"&gt;</code></pre>' +
         '<a href="#edit/'+ptr.in+'" class="btn btn-secondary edit">Edit</a>' +
         '<a href="#delete/'+ptr.in+'" class="btn btn-danger delete">Delete</a>' +
         '</div></div>').appendTo(pointer_status)
@@ -151,7 +153,7 @@ async function pointer_edit_ui(ptr) {
         '</div>' +
         '</div></form></div></div>').appendTo(editbox)
     $("#pointer_type_select").change(select_type)
-    $('<a class="save btn btn-primary" href="#save">Save Pointer</a>').appendTo(editbox).click(handle_save)
+    $('<a class="save btn btn-success" href="#save">Save Pointer</a>').appendTo(editbox).click(handle_save)
 }
 
 function select_type(event) {
