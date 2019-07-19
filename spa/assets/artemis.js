@@ -1,5 +1,5 @@
 let base_url = "$artemis-pointers.dev"
-let logged_in = false//true
+let logged_in = false
 let api_token = ""
 const api_base = "https://api-dot-artemis-pointers.appspot.com"
 
@@ -494,7 +494,7 @@ async function do_delete(ptr_in) {
         }))
 
         console.debug(resp)
-        return resp
+        return true
     }
 
     if (mock_pointers.hasOwnProperty(ptr_in)) {
@@ -517,11 +517,14 @@ async function do_save(ptr, old_in) {
         const resp = await ($.ajax({
             url: url,
             dataType:"json",
-            headers: {"Authorization": "Bearer "+api_token},
-            method: "PUT"
+            headers: {"Authorization": "Bearer "+api_token, "Content-Type": "application/json"},
+            method: "PUT",
+            data: JSON.stringify(ptr)
         }))
         console.debug(resp)
         successNotif("Saved! "+JSON.stringify(ptr,null,2))
+        window.location.hash = "#show/"+ptr.in
+        return
     }
 
     if (old_in && mock_pointers.hasOwnProperty(old_in)) {
@@ -533,6 +536,7 @@ async function do_save(ptr, old_in) {
     }
     mock_pointers[ptr.in] = ptr
     successNotif("Saved! "+JSON.stringify(ptr,null,2))
+    window.location.hash = "#show/"+ptr.in
 }
 
 async function do_pay(ptr_in) {
