@@ -10,13 +10,15 @@
     <link href="assets/bootstrap.css" rel="stylesheet" />
     <script src="assets/jquery-1.11.1.min.js"></script>
     <script src="assets/bootstrap.min.js"></script>
+    <script src="assets/bootstrap-growl.jquery.js"></script>
     <script src="assets/artemis.js"></script>
+    <script src="assets/big.min.js" type="application/javascript"></script>
 
 </head>
 
 <body class="artemis ">
   <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white">
-    <a href="/" class="navbar-brand"><img src="assets/artemis-plate.png" class="logo"  height="100" alt="Artemis" /></a>
+    <a href="index.html" class="navbar-brand"><img src="assets/artemis-plate.png" class="logo"  height="100" alt="Artemis" /></a>
     <h1>Artemis</h1>
     <button class="navbar-toggler" type="button" data-toggle="slide-collapse" data-target="#navbarHolder" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -45,7 +47,10 @@
         <section class="pointerlist">
         </section>
         
-        <section class="edit">
+        <section class="pointer_editor">
+        </section>
+        
+        <section class="pointer_status">
         </section>
 
 
@@ -54,11 +59,11 @@
       <!-- Left sidebar last so it's at the end for mobile -->
       <aside class="sidebar col-md-5 col-lg-3 p-0 order-md-1" role="complementary">
         <ul>
-          <li><a href="#create" class="createpointer">Create</a></li>
-          <li><a href="#list" class="listpointers active">List</a></li>
-          <li>dolor</li>
-          <li>sit</li>
-          <li>amet</li>
+          <li><a href="#create" class="create">Create</a></li>
+          <li><a href="#list" class="list active">List</a></li>
+          <li><a href="#show" class="show not-real-link">Show (pointer)</a></li>
+          <li><a href="#edit" class="edit not-real-link">Edit (pointer)</a></li>
+          <li><a href="#delete" class="delete not-real-link">Delete (pointer)</a></li>
         </ul>
       </aside>
     </div><!--/.row (main layout)-->

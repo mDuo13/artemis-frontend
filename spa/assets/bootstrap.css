@@ -7415,6 +7415,12 @@ a.current {
   border-bottom: 1px solid #1B1818;
   padding-bottom: 7px; }
 
+/* ARTEMIS STUFF */
 .pointer.card {
   margin-bottom: 32px;
+}
+
+.not-real-link {
+  color: black;
+  text-decoration: none !important;
 }
