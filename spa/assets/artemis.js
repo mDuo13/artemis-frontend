@@ -3,7 +3,7 @@ let logged_in = false//true
 let api_token = ""
 const api_base = "https://api-dot-artemis-pointers.appspot.com"
 
-const use_mock = false//true
+const use_mock = false
 
 let auth0
 
@@ -23,13 +23,14 @@ async function on_ready() {
 
 function handle_hashchange(evt) {
     if (logged_in) {
-        const path_match = (/^#(create|list|edit|show|delete|logout)\/?(.*)$/).exec(window.location.hash)
+        const path_match = (/^#(create|list|edit|show|delete|pay|logout)\/?(.*)$/).exec(window.location.hash)
         if (path_match === null) list_pointers()
         else if (path_match[1] == "create") create_pointer()
         else if (path_match[1] == "list") list_pointers()
         else if (path_match[1] == "edit" && path_match[2]) edit_pointer(path_match[2])
         else if (path_match[1] == "show" && path_match[2]) show_pointer(path_match[2])
         else if (path_match[1] == "delete" && path_match[2]) delete_pointer(path_match[2])
+        else if (path_match[1] == "pay" && path_match[2]) do_pay(path_match[2])
         else if (path_match[1] == "logout") do_logout()
         else list_pointers()
     } else {
@@ -112,6 +113,10 @@ async function list_pointers() {
             '</div>' +
             '</div>').appendTo(pointerlist)
     })
+    
+    if (data.pointers.length === 0) {
+        $('<div class="card pointer"><div class="card-body"><p>No pointers defined.</p></div></div>').appendTo(pointerlist)
+    }
     $('<a class="create btn btn-success" href="#create">Create New Pointer</a>').appendTo(pointerlist).click(create_pointer)
 }
 
@@ -154,6 +159,7 @@ async function show_pointer(ptr_in) {
         '<pre><code id="monetization_sample">&lt;meta name="monetization"\n  content="'+base_url+'/'+ptr.in+'"&gt;</code></pre>' +
         '<a href="#edit/'+ptr.in+'" class="btn btn-secondary edit">Edit</a>' +
         '<a href="#delete/'+ptr.in+'" class="btn btn-danger delete">Delete</a>' +
+        '<a href="#pay/'+ptr.in+'" class="btn btn-info delete">Pay Now</a>' +
         '</div></div>').appendTo(pointer_status)
     
     $("#left-nav .edit").prop("href", "#edit/"+ptr.in).removeClass("not-real-link")
@@ -430,11 +436,11 @@ async function get_pointers() {
         const resp = await ($.ajax({
             url: api_base+"/pointers",
             dataType: "json",
-            headers: {"Auth": "Bearer "+api_token}
+            headers: {"Authorization": "Bearer "+api_token}
         }))
 
         console.log(resp)
-        return resp.data
+        return {"pointers":resp}
     }
 
     ////////// MOCK BELOW //////////////////////////////
@@ -457,20 +463,22 @@ async function get_status(ptr_in) {
         const resp = await ($.ajax({
             url: url,
             dataType:"json",
-            headers: {"Auth": "Bearer "+api_token}
+            headers: {"Authorization": "Bearer "+api_token}
         }))
 
         console.debug(resp)
-        return resp.data
+        return resp
     }
 
     let extended_ptr = $.extend(true, {}, mock_pointers[ptr_in])
-    if (extended_ptr.in == "mduo13") {
-        extended_ptr["balance"] = "1300001"
-    } else if (extended_ptr.in == "dfuelling") {
-        extended_ptr["balance"] = "47"
-    } else {
-        extended_ptr["balance"] = Math.floor(Math.random()*(10**(Math.floor(Math.random()*10)))).toString()
+    if (!extended_ptr.hasOwnProperty("balance")) {    
+        if (extended_ptr.in == "mduo13") {
+            extended_ptr["balance"] = "1300001"
+        } else if (extended_ptr.in == "dfuelling") {
+            extended_ptr["balance"] = "47"
+        } else {
+            extended_ptr["balance"] = Math.floor(Math.random()*(10**(Math.floor(Math.random()*10)))).toString()
+        }
     }
     return extended_ptr
 }
@@ -481,12 +489,12 @@ async function do_delete(ptr_in) {
         const resp = await ($.ajax({
             url: url,
             dataType:"json",
-            headers: {"Auth": "Bearer "+api_token},
+            headers: {"Authorization": "Bearer "+api_token},
             method: "DELETE"
         }))
 
         console.debug(resp)
-        return resp.data
+        return resp
     }
 
     if (mock_pointers.hasOwnProperty(ptr_in)) {
@@ -509,7 +517,7 @@ async function do_save(ptr, old_in) {
         const resp = await ($.ajax({
             url: url,
             dataType:"json",
-            headers: {"Auth": "Bearer "+api_token},
+            headers: {"Authorization": "Bearer "+api_token},
             method: "PUT"
         }))
         console.debug(resp)
@@ -525,6 +533,25 @@ async function do_save(ptr, old_in) {
     }
     mock_pointers[ptr.in] = ptr
     successNotif("Saved! "+JSON.stringify(ptr,null,2))
+}
+
+async function do_pay(ptr_in) {
+    if (!use_mock) {
+        const url = api_base+"/pointers/"+encodeURI(ptr_in)+'/pay'
+        const resp = await ($.ajax({
+            url: url,
+            dataType:"json",
+            headers: {"Authorization": "Bearer "+api_token},
+            method: "POST"
+        }))
+
+        console.debug(resp)
+        return resp
+    }
+    
+    mock_pointers[ptr_in].balance = 0
+    window.location.hash = "#show/"+ptr_in
+    successNotif("Sent! ")
 }
 
 
