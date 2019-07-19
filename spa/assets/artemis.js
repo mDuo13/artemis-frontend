@@ -1,5 +1,5 @@
 let base_url = "$artemis-pointers.dev"
-const api_base = "https://artemis-pointers.dev/api" // TODO
+const api_base = "https://artemis-pointers.dev/v1" // TODO
 
 async function on_ready() {
 

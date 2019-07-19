@@ -1,0 +1,21 @@
+{
+    "pointers": [
+        {
+          "in": "mduo13",
+          "type": "XRPL_ADDRESS",
+          "to": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
+          "threshold": "0001",
+          "currency_code": "XRP",
+          "currency_scale": 6
+        },
+
+        "dfuelling": {
+          "in": "dfuelling",
+          "type": "PAYMENT_POINTER",
+          "to": "$example.com/david",
+          "threshold": "0001",
+          "currency_code": "HAK",
+          "currency_scale": 0
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "in": "mduo13",
+  "type": "XRPL_ADDRESS",
+  "to": "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
+  "threshold": "0001",
+  "currency_code": "XRP",
+  "currency_scale": 6,
+  "balance": "13000001"
+}

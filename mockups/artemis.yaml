@@ -1,0 +1,113 @@
+swagger: "2.0"
+info:
+  description: |
+   Artemis API
+  version: "0.0.1"
+  title: Artemis API
+host: artemis-pointers.dev
+basePath: /v1
+schemes:
+  - http
+paths:
+  /pointers:
+   
+    get:
+      tags:
+        - pointers
+      summary: List user's existing pointers
+      description: ""
+      produces:
+        - application/json
+        
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pointer"
+        "400":
+          description: invalid input
+      
+  
+  /pointers/{in}:
+    parameters:
+      - in: path
+        name: in
+        description: unique part of the pointer
+        required: true
+        type: string
+    get:
+      tags:
+        - pointer
+      summary: Get status of a pointer
+      produces:
+        - application/json
+      
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pointer"
+        "404":
+          description: Pointer doesn't exist
+    put:
+      tags:
+        - pointer
+      summary: Add or update a pointer
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pointer"
+        "400":
+          description: invalid format
+        "409":
+          description: pointer is already taken (probably by another user)
+    delete:
+      tags:
+        - pointer
+      summary: Remove a pointer
+      responses:
+        "200":
+          description: successful operation
+          schema: {}
+        "404":
+          description: Item could not be deleted
+    
+  
+definitions:
+  
+  Pointer:
+    type: object
+    required:
+      - in
+      - type
+      - to
+      - threshold
+      - currency_code
+      - currency_scale
+    properties:
+      in:
+        type: string
+        example: mduo13
+      type:
+        enum:
+          - PAYMENT_POINTER
+          - XRPL_ADDRESS
+          - SPSP_URL
+          - NONE
+        example: PAYMENT_POINTER
+      threshold:
+        type: string
+      currency_code:
+        type: string
+        example: "XRP"
+      currency_scale:
+        type: integer
+      
+
